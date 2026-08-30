@@ -23,7 +23,7 @@ button{font-family:inherit}.primary,.secondary,.danger{width:100%;min-height:54p
     <textarea id="sourceText" placeholder="在这里粘贴文章……"></textarea>
     <button id="extractBtn" class="primary">开始提炼</button>
     <button id="historyBtn" class="secondary">历史记录</button>
-    <div class="version">V1.1.0 · 260830-1405</div>
+    <div class="version">V1.1.1 · 260830-1415</div>
   </div>
 
   <div id="level2" class="hidden">
@@ -99,7 +99,7 @@ $("enhanceBtn").onclick=()=>{if(!current)return;current.summary=enhanceSummary(c
 $("speakToggleBtn").onclick=speakToggle;
 $("generatePptBtn").onclick=()=>{if(!current)return;current.summary=$("summary").innerText.trim()||current.summary;current.deck=buildDeck(current.summary);current.dirty=true;renderDeck(current.deck);$("level3").classList.remove("hidden");setEdit(false);$("level3").scrollIntoView({behavior:"smooth",block:"start"})};
 $("editPptBtn").onclick=()=>setEdit(!pptEditing);$("savePptBtn").onclick=saveHistoryRecord;$("downloadPptBtn").onclick=downloadPpt;
-$("clearPptBtn").onclick=()=>{if(!current?.deck)return;if(current.dirty&&!current.savedId){alert("请先保存到历史记录，再清屏。");return}if(pptEditing)setEdit(false);$("pptArea").innerHTML="";$("level3").classList.add("hidden");current.deck=null;window.scrollTo({top:$("level2").offsetTop-8,behavior:"smooth"})};
+$("clearPptBtn").onclick=()=>{if(!current?.deck)return;if(current.dirty&&!current.savedId){alert("请先保存到历史记录，再清屏。");return}if(pptEditing)setEdit(false);if(window.speechSynthesis)window.speechSynthesis.cancel();speaking=false;$("pptArea").innerHTML="";$("summary").textContent="";$("sourceText").value="";$("level3").classList.add("hidden");$("level2").classList.add("hidden");current=null;window.scrollTo({top:0,behavior:"smooth"});setTimeout(()=>$("sourceText").focus(),350)};
 $("historyBtn").onclick=()=>{$("home").classList.add("hidden");$("historyPanel").classList.remove("hidden");renderHistory();window.scrollTo(0,0)};$("backBtn").onclick=()=>{$("historyPanel").classList.add("hidden");$("home").classList.remove("hidden");window.scrollTo(0,0)};
 $("historyList").onclick=e=>{const item=e.target.closest(".history-item");if(!item)return;let a=loadHistory(),id=Number(item.dataset.id),r=a.find(x=>x.id===id);if(e.target.classList.contains("del")){localStorage.setItem(KEY,JSON.stringify(a.filter(x=>x.id!==id)));renderHistory();return}if(e.target.classList.contains("open")&&r){current={source:r.source||"",summary:r.summary||"",target:targetLen(r.source||""),deck:r.deck,dirty:false,savedId:r.id};$("sourceText").value=current.source;$("summary").textContent=current.summary;renderDeck(current.deck);$("level2").classList.remove("hidden");$("level3").classList.remove("hidden");$("historyPanel").classList.add("hidden");$("home").classList.remove("hidden");setEdit(false);window.scrollTo({top:$("level2").offsetTop-8,behavior:"smooth"})}};
 $("clearHistoryBtn").onclick=()=>{if(confirm("确定清空全部历史记录吗？")){localStorage.removeItem(KEY);renderHistory()}};
